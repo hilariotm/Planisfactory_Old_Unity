@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MinerMK1
   m_EditorClassIdentifier: 
   buildingName: Miner Mk1
-  prefab: {fileID: 0}
+  prefab: {fileID: 5486354735448576547, guid: 965781ab6635a2347a6b8d74309e3cfd, type: 3}
   size: {x: 6, y: 14}
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 932f865d03a435549b2447c25f5270c4, type: 3}
   category: 0
