@@ -21,23 +21,33 @@ public class BuildingUIManager : MonoBehaviour
 
     private void CategorizeBuildings()
     {
+        Debug.Log("Starting categorization");
         categorizedBuildings = new Dictionary<BuildingCategory, List<BuildingData>>();
-        
+    
+        Debug.Log($"Number of buildings: {allBuildings.Count}");
         foreach (BuildingData building in allBuildings)
         {
+            Debug.Log($"Processing building: {building.buildingName}, Category: {building.category}");
             if (!categorizedBuildings.ContainsKey(building.category))
             {
                 categorizedBuildings[building.category] = new List<BuildingData>();
             }
             categorizedBuildings[building.category].Add(building);
         }
+        Debug.Log($"Categories created: {categorizedBuildings.Count}");
     }
 
     private void CreateCategoryButtons()
     {
+        Debug.Log($"Creating buttons for {categorizedBuildings.Keys.Count} categories");
+        Debug.Log($"Category Button Prefab: {categoryButtonPrefab}");
+        Debug.Log($"Categories Container: {categoriesContainer}");
+
         foreach (BuildingCategory category in categorizedBuildings.Keys)
         {
+            Debug.Log($"Creating button for category: {category}");
             GameObject buttonObj = Instantiate(categoryButtonPrefab, categoriesContainer);
+            Debug.Log($"Button object created: {buttonObj}, Has Button: {buttonObj.GetComponent<Button>()}, Has Text: {buttonObj.GetComponentInChildren<Text>()}");
             Button button = buttonObj.GetComponent<Button>();
             button.GetComponentInChildren<Text>().text = category.ToString();
             
