@@ -354,6 +354,7 @@ MonoBehaviour:
   buildingsContainer: {fileID: 1624926679}
   allBuildings:
   - {fileID: 11400000, guid: a08bc5d804e37ae48bed588e5c2da051, type: 2}
+  - {fileID: 11400000, guid: c758dea7c338e8a4295cb2574b72056d, type: 2}
   buildingManager: {fileID: 1028825868}
 --- !u!4 &601991793
 Transform:
@@ -1287,7 +1288,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2164026798178892659, guid: e5182a115760e8547a63de4bae49d998, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 30
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 2164026798178892659, guid: e5182a115760e8547a63de4bae49d998, type: 3}
       propertyPath: m_LocalPosition.x
