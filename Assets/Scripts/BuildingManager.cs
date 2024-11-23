@@ -7,6 +7,54 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private GridPathCreator gridManager;
     [SerializeField] private List<BuildingData> buildings;
     [SerializeField] private Transform buildingsContainer;
+    [SerializeField] private int currentFloor = 0;
+    [SerializeField] private int maxFloors = 3;
+
+    // Dictionary to store buildings by floor
+    private Dictionary<int, List<GameObject>> buildingsByFloor = new Dictionary<int, List<GameObject>>();
+
+    private void Start()
+    {
+        // Initialize floors
+        for (int i = 0; i < maxFloors; i++)
+        {
+            buildingsByFloor[i] = new List<GameObject>();
+        }
+    }
+
+    public void SetCurrentFloor(int floor)
+    {
+        if (floor >= 0 && floor < maxFloors)
+        {
+            currentFloor = floor;
+            UpdateBuildingVisibility();
+        }
+    }
+
+    private void UpdateBuildingVisibility()
+    {
+        foreach (var floorKvp in buildingsByFloor)
+        {
+            foreach (var building in floorKvp.Value)
+            {
+                SpriteRenderer renderer = building.GetComponent<SpriteRenderer>();
+                if (floorKvp.Key == currentFloor)
+                {
+                    building.SetActive(true);
+                    renderer.color = new Color(1f, 1f, 1f, 1f);
+                }
+                else if (floorKvp.Key == currentFloor - 1)
+                {
+                    building.SetActive(true);
+                    renderer.color = new Color(1f, 1f, 1f, 0.3f);
+                }
+                else
+                {
+                    building.SetActive(false);
+                }
+            }
+        }
+    }
     
     private BuildingData selectedBuilding;
     private GameObject previewBuilding;
@@ -43,6 +91,24 @@ public class BuildingManager : MonoBehaviour
         CreatePreview();
     }
 
+    private int GetSortingOrder(GameObject building)
+    {
+        int floorBase = currentFloor * 1000;
+    
+        if (building.CompareTag("Foundation"))
+        {
+            return floorBase + 0;
+        }
+        else if (building.CompareTag("Conveyor"))
+        {
+            return floorBase + 100;
+        }
+        else
+        {
+            return floorBase + 200 + placedBuildings.Count;
+        }
+    }
+
     private void CreatePreview()
     {
         if (previewBuilding != null) 
@@ -54,6 +120,7 @@ public class BuildingManager : MonoBehaviour
         previewBuilding.transform.position = new Vector3(mousePos.x, -90f, mousePos.y);
         previewRenderer = previewBuilding.GetComponent<SpriteRenderer>();
         previewRenderer.color = new Color(1f, 1f, 1f, 0.5f);
+        previewRenderer.sortingOrder = GetSortingOrder(previewBuilding);
     }
 
     private Vector3 SnapBuildingToGrid(Vector3 worldPosition, Vector2Int size)
@@ -78,28 +145,36 @@ public class BuildingManager : MonoBehaviour
         float minZ = gridOffset.z;
         float maxZ = -gridOffset.z;
 
-        // First check: Grid boundaries
         if (position.x - halfWidth < minX || position.x + halfWidth > maxX ||
             position.y - halfHeight < minZ || position.y + halfHeight > maxZ)
         {
             return false;
         }
 
-        // Second check: Building overlaps
         Vector3 buildingPosition = new Vector3(position.x, -90f, position.y);
         Vector3 buildingSize = new Vector3(size.x * gridManager.cellSize, 1f, size.y * gridManager.cellSize);
     
-        foreach (GameObject existingBuilding in placedBuildings)
+        // Check only against buildings on the current floor
+        if (buildingsByFloor.ContainsKey(currentFloor))
         {
-            SpriteRenderer existingRenderer = existingBuilding.GetComponent<SpriteRenderer>();
-            if (existingRenderer != null)
+            foreach (GameObject existingBuilding in buildingsByFloor[currentFloor])
             {
-                Bounds existingBounds = existingRenderer.bounds;
-                Bounds newBuildingBounds = new Bounds(buildingPosition, buildingSize);
-            
-                if (existingBounds.Intersects(newBuildingBounds))
+                // Skip collision check if existing building is a foundation
+                if (existingBuilding.CompareTag("Foundation"))
                 {
-                    return false;
+                    continue;
+                }
+
+                SpriteRenderer existingRenderer = existingBuilding.GetComponent<SpriteRenderer>();
+                if (existingRenderer != null)
+                {
+                    Bounds existingBounds = existingRenderer.bounds;
+                    Bounds newBuildingBounds = new Bounds(buildingPosition, buildingSize);
+                
+                    if (existingBounds.Intersects(newBuildingBounds))
+                    {
+                        return false;
+                    }
                 }
             }
         }
@@ -115,6 +190,15 @@ public class BuildingManager : MonoBehaviour
         GameObject newBuilding = Instantiate(selectedBuilding.prefab, spawnPosition, rotation);
         newBuilding.transform.SetParent(buildingsContainer);
         placedBuildings.Add(newBuilding);
+    
+        SpriteRenderer renderer = newBuilding.GetComponent<SpriteRenderer>();
+        renderer.sortingOrder = GetSortingOrder(newBuilding);
+    
+        if (!buildingsByFloor.ContainsKey(currentFloor))
+        {
+            buildingsByFloor[currentFloor] = new List<GameObject>();
+        }
+        buildingsByFloor[currentFloor].Add(newBuilding);
     }
 
     private void CancelBuildingPlacement()
