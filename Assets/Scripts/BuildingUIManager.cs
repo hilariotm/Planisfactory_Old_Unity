@@ -4,6 +4,14 @@ using System.Collections.Generic;
 
 public class BuildingUIManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class CategoryInfo
+    {
+        public BuildingCategory category;
+        public Sprite icon;
+    }
+
+    [SerializeField] private List<CategoryInfo> categoryIcons;
     [SerializeField] private GameObject categoryButtonPrefab;
     [SerializeField] private GameObject buildingButtonPrefab;
     [SerializeField] private Transform categoriesContainer;
@@ -15,71 +23,94 @@ public class BuildingUIManager : MonoBehaviour
 
     private void Start()
     {
-        CategorizeBuildings();
+        InitializeDictionary();
         CreateCategoryButtons();
     }
 
-    private void CategorizeBuildings()
+    private void InitializeDictionary()
     {
-        Debug.Log("Starting categorization");
         categorizedBuildings = new Dictionary<BuildingCategory, List<BuildingData>>();
-    
-        Debug.Log($"Number of buildings: {allBuildings.Count}");
+        
         foreach (BuildingData building in allBuildings)
         {
-            Debug.Log($"Processing building: {building.buildingName}, Category: {building.category}");
             if (!categorizedBuildings.ContainsKey(building.category))
             {
                 categorizedBuildings[building.category] = new List<BuildingData>();
             }
             categorizedBuildings[building.category].Add(building);
         }
-        Debug.Log($"Categories created: {categorizedBuildings.Count}");
     }
 
     private void CreateCategoryButtons()
     {
-        Debug.Log($"Creating buttons for {categorizedBuildings.Keys.Count} categories");
-        Debug.Log($"Category Button Prefab: {categoryButtonPrefab}");
-        Debug.Log($"Categories Container: {categoriesContainer}");
-
         foreach (BuildingCategory category in categorizedBuildings.Keys)
         {
-            Debug.Log($"Creating button for category: {category}");
             GameObject buttonObj = Instantiate(categoryButtonPrefab, categoriesContainer);
-            Debug.Log($"Button object created: {buttonObj}, Has Button: {buttonObj.GetComponent<Button>()}, Has Text: {buttonObj.GetComponentInChildren<Text>()}");
             Button button = buttonObj.GetComponent<Button>();
-            button.GetComponentInChildren<Text>().text = category.ToString();
+            TMPro.TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            Image buttonImage = buttonObj.GetComponent<Image>();
             
-            button.onClick.AddListener(() => ShowBuildingsInCategory(category));
+            buttonText.text = category.ToString();
+            
+            // Set the category icon
+            CategoryInfo categoryInfo = categoryIcons.Find(info => info.category == category);
+            if (categoryInfo != null && categoryInfo.icon != null)
+            {
+                buttonImage.sprite = categoryInfo.icon;
+            }
+            
+            button.onClick.AddListener(() => ShowBuildingsForCategory(category));
         }
     }
 
-    private void ShowBuildingsInCategory(BuildingCategory category)
+    private void ShowBuildingsForCategory(BuildingCategory category)
     {
-        // Clear existing building buttons
         foreach (Transform child in buildingsContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // Create buttons for buildings in selected category
         foreach (BuildingData building in categorizedBuildings[category])
         {
             GameObject buttonObj = Instantiate(buildingButtonPrefab, buildingsContainer);
             Button button = buttonObj.GetComponent<Button>();
-            
-            // Set button icon
+            TMPro.TextMeshProUGUI buttonText = buttonObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            buttonText.text = building.buildingName;
+        
             if (building.icon != null)
             {
                 buttonObj.GetComponent<Image>().sprite = building.icon;
             }
-            
-            // Set building name
-            buttonObj.GetComponentInChildren<Text>().text = building.buildingName;
-            
-            // Add click handler
+        
             button.onClick.AddListener(() => buildingManager.SelectBuilding(building));
         }
+    }
+
+    private void ClearBuildingButtons()
+    {
+        foreach (Transform child in buildingsContainer)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void CreateBuildingButton(BuildingData building)
+    {
+        GameObject buttonObj = Instantiate(buildingButtonPrefab, buildingsContainer);
+        
+        // Set building icon
+        Image buttonImage = buttonObj.GetComponent<Image>();
+        if (building.icon != null)
+        {
+            buttonImage.sprite = building.icon;
+        }
+        
+        // Set building name
+        Text buttonText = buttonObj.GetComponentInChildren<Text>();
+        buttonText.text = building.buildingName;
+        
+        // Add click handler
+        Button button = buttonObj.GetComponent<Button>();
+        button.onClick.AddListener(() => buildingManager.SelectBuilding(building));
     }
 }

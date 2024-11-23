@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aedec09d59f80c24f911500859bd5421, type: 3}
+  m_Name: Assembler
+  m_EditorClassIdentifier: 
+  buildingName: Assembler
+  prefab: {fileID: 783472264498362956, guid: 4026a8a4dc6ef2a4ba170e55ea773679, type: 3}
+  size: {x: 1, y: 1}
+  icon: {fileID: 21300000, guid: a55f9197e221fe04f9605d9c639c85ee, type: 3}
+  category: 1
+  subCategory: 4
+  powerConsumption: 15
+  powerGeneration: 0

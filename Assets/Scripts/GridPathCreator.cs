@@ -72,7 +72,7 @@ public class GridPathCreator : MonoBehaviour
         targetPanPosition = Camera.main.transform.position;
     }
 
-    private Vector3 GetGridOffset()
+    public Vector3 GetGridOffset()
     {
         float offsetX = -(gridWidth * cellSize) / 2f;
         float offsetZ = -(gridHeight * cellSize) / 2f;
