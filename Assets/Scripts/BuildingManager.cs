@@ -9,6 +9,7 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private Transform buildingsContainer;
     [SerializeField] private int currentFloor = 0;
     [SerializeField] private int maxFloors = 3;
+    [SerializeField] private GridPathCreator gridPathCreator;
 
     // Dictionary to store buildings by floor
     private Dictionary<int, List<GameObject>> buildingsByFloor = new Dictionary<int, List<GameObject>>();
@@ -28,7 +29,13 @@ public class BuildingManager : MonoBehaviour
         {
             currentFloor = floor;
             UpdateBuildingVisibility();
+            gridPathCreator.UpdateCurrentFloor(floor);
         }
+    }
+
+    public int GetCurrentFloor()
+    {
+        return currentFloor;
     }
 
     private void UpdateBuildingVisibility()

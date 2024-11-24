@@ -40,8 +40,10 @@ public class GridPathCreator : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Button startPathButton;
     [SerializeField] private Button stopPathButton;
-    
+    [SerializeField] private BuildingManager buildingManager;  // Add reference to BuildingManager
     [SerializeField] private bool isPathCreationMode;
+    [SerializeField] private int currentFloor = 0;
+    private Dictionary<int, List<LineRenderer>> pathsByFloor = new Dictionary<int, List<LineRenderer>>();
     
     private List<Vector2> currentPathPoints;
     private List<LineRenderer> pathLines;
@@ -70,6 +72,7 @@ public class GridPathCreator : MonoBehaviour
         CreateGrid();
         targetZoom = Camera.main.orthographicSize;
         targetPanPosition = Camera.main.transform.position;
+        currentFloor = buildingManager.GetCurrentFloor();
     }
 
     public Vector3 GetGridOffset()
@@ -240,7 +243,9 @@ public class GridPathCreator : MonoBehaviour
         line.startWidth = lineWidth;
         line.endWidth = lineWidth;
         line.material = lineMaterial;
-        line.sortingOrder = 1;
+        // Set sorting order for conveyors
+        int floorBase = currentFloor * 1000;
+        line.sortingOrder = floorBase + 100;  // Conveyors: above foundations, below other buildings
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         line.receiveShadows = false;
         line.allowOcclusionWhenDynamic = false;
@@ -296,6 +301,9 @@ public class GridPathCreator : MonoBehaviour
             Vector2 lastPoint = currentPathPoints[currentPathPoints.Count - 1];
             previewLine.SetPosition(0, new Vector3(lastPoint.x, 0, lastPoint.y));
             previewLine.SetPosition(1, new Vector3(snappedPos.x, 0, snappedPos.y));
+            // Set preview sorting order based on current floor
+            int floorBase = currentFloor * 1000;
+            previewLine.sortingOrder = floorBase + 100;
         }
         else
         {
@@ -340,13 +348,76 @@ public class GridPathCreator : MonoBehaviour
     private void CreateNewPath()
     {
         currentPathPoints = new List<Vector2>();
-        GameObject newPathObject = new GameObject($"Path_{pathLines.Count}");
+        GameObject newPathObject = new GameObject($"Path_Floor{currentFloor}_{pathLines.Count}");
         newPathObject.transform.parent = pathsContainer.transform;
         currentLine = newPathObject.AddComponent<LineRenderer>();
         SetupLineRenderer(currentLine);
         currentLine.startColor = pathColor;
         currentLine.endColor = pathColor;
+    
+        Debug.Log($"Creating new path on floor {currentFloor}");
+    
+        if (!pathsByFloor.ContainsKey(currentFloor))
+        {
+            pathsByFloor[currentFloor] = new List<LineRenderer>();
+            Debug.Log($"Created new floor list for floor {currentFloor}");
+        }
+    
+        pathsByFloor[currentFloor].Add(currentLine);
         pathLines.Add(currentLine);
+    
+        Debug.Log($"Total paths on floor {currentFloor}: {pathsByFloor[currentFloor].Count}");
+    }
+
+    // Add method to change floors
+    public void SetCurrentFloor(int floor)
+    {
+        currentFloor = floor;
+        UpdatePathVisibility();
+    }
+
+    private void UpdatePathVisibility()
+    {
+        foreach (var floorPaths in pathsByFloor)
+        {
+            bool isCurrentFloor = floorPaths.Key == currentFloor;
+            bool isFloorBelow = floorPaths.Key == currentFloor - 1;
+        
+            foreach (var path in floorPaths.Value)
+            {
+                if (path != null)
+                {
+                    if (isCurrentFloor)
+                    {
+                        path.enabled = true;
+                        SetPathOpacity(path, 1f);
+                    }
+                    else if (isFloorBelow)
+                    {
+                        path.enabled = true;
+                        SetPathOpacity(path, 0.3f);
+                    }
+                    else
+                    {
+                        path.enabled = false;
+                    }
+                }
+            }
+        }
+    }
+
+    private void SetPathOpacity(LineRenderer path, float opacity)
+    {
+        Color color = pathColor;
+        color.a = opacity;
+        path.startColor = color;
+        path.endColor = color;
+    }
+
+    public void UpdateCurrentFloor(int floor)
+    {
+        currentFloor = floor;
+        UpdatePathVisibility();
     }
 
     public void StartPathCreation()
@@ -407,15 +478,21 @@ public class GridPathCreator : MonoBehaviour
         }
     }
 
+    // Modify ClearPath()
     public void ClearPath()
     {
-        foreach (var line in pathLines)
+        if (pathsByFloor.ContainsKey(currentFloor))
         {
-            if (line != null)
+            foreach (var path in pathsByFloor[currentFloor])
             {
-                Destroy(line.gameObject);
+                if (path != null)
+                {
+                    Destroy(path.gameObject);
+                }
             }
+            pathsByFloor[currentFloor].Clear();
         }
+    
         pathLines.Clear();
         currentPathPoints.Clear();
         currentLine = null;

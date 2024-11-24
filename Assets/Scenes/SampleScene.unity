@@ -576,7 +576,9 @@ MonoBehaviour:
   panSmoothness: 10
   startPathButton: {fileID: 1501668515}
   stopPathButton: {fileID: 675969787}
+  buildingManager: {fileID: 0}
   isPathCreationMode: 0
+  currentFloor: 0
 --- !u!4 &617680777
 Transform:
   m_ObjectHideFlags: 0
@@ -674,7 +676,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1887034819}
   m_HandleRect: {fileID: 1887034818}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1222,6 +1224,7 @@ MonoBehaviour:
   buildingsContainer: {fileID: 840619667}
   currentFloor: 0
   maxFloors: 3
+  gridPathCreator: {fileID: 617680776}
 --- !u!1 &1275568804
 GameObject:
   m_ObjectHideFlags: 0
@@ -1371,7 +1374,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00026561282}
+  m_AnchoredPosition: {x: 0, y: -0.0001463592}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1304626033
