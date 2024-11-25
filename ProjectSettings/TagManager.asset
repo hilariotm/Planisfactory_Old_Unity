@@ -43,3 +43,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Background
+    uniqueID: 3300619627
+    locked: 0
+  - name: Grid
+    uniqueID: 835722377
+    locked: 0
+  - name: Buildings
+    uniqueID: 1201386225
+    locked: 0
+  - name: Paths
+    uniqueID: 3410791695
+    locked: 0
+  - name: UI
+    uniqueID: 1763125141
+    locked: 0

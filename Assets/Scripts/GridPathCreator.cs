@@ -87,6 +87,12 @@ public class GridPathCreator : MonoBehaviour
         GameObject gridContainer = new GameObject("GridContainer");
         gridContainer.transform.parent = transform;
 
+        // Set grid lines to background layer
+        foreach (LineRenderer line in gridContainer.GetComponentsInChildren<LineRenderer>())
+        {
+            line.sortingLayerName = "Background";
+        }
+
         float startX = -(gridWidth * cellSize) / 2f;
         float startZ = -(gridHeight * cellSize) / 2f;
 

@@ -294,4 +294,27 @@ public class BuildingManager : MonoBehaviour
     {
         return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
     }
+
+    private void SetupBuildingRendering(GameObject building)
+    {
+        SpriteRenderer renderer = building.GetComponent<SpriteRenderer>();
+    
+        // Set the sorting layer based on type
+        if (building.CompareTag("Foundation"))
+        {
+            renderer.sortingLayerName = "Buildings";
+        }
+        else if (building.CompareTag("Conveyor"))
+        {
+            renderer.sortingLayerName = "Buildings";
+        }
+        else
+        {
+            renderer.sortingLayerName = "Buildings";
+        }
+    
+        // Keep your existing sorting order logic
+        renderer.sortingOrder = GetSortingOrder(building);
+    }
+
 }
