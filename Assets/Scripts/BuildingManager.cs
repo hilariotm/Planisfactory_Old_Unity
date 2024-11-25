@@ -99,11 +99,14 @@ public class BuildingManager : MonoBehaviour
 
     private void Update()
     {
+        //Remove undo function
+        /*
         if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
         {
             HandleUndo();
         }
-
+        */
+        
         if (Input.GetKeyDown(KeyCode.Escape) && selectedBuilding != null)
         {
             CancelBuildingPlacement();

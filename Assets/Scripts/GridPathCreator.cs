@@ -72,7 +72,10 @@ public class GridPathCreator : MonoBehaviour
         CreateGrid();
         targetZoom = Camera.main.orthographicSize;
         targetPanPosition = Camera.main.transform.position;
-        currentFloor = buildingManager.GetCurrentFloor();
+        if (buildingManager != null)
+        {
+            currentFloor = buildingManager.GetCurrentFloor();
+        }
     }
 
     public Vector3 GetGridOffset()
