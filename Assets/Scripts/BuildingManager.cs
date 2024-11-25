@@ -13,6 +13,19 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private ResourceTotalsUI resourceTotalsUI;
     [SerializeField] private ResourceCalculator resourceCalculator;
     [SerializeField] private PowerSummaryUI powerSummaryUI;
+    private Stack<(GameObject building, int floor)> buildingHistory = new Stack<(GameObject building, int floor)>();
+
+    private void HandleUndo()
+    {
+        if (buildingHistory.Count > 0)
+        {
+            var (lastBuilding, floor) = buildingHistory.Pop();
+            buildingsByFloor[floor].Remove(lastBuilding);
+            placedBuildings.Remove(lastBuilding);
+            Destroy(lastBuilding);
+            UpdateResourceDisplay();
+        }
+    }
 
 
     // Add these variables at the top with other private fields
@@ -86,6 +99,11 @@ public class BuildingManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.Z))
+        {
+            HandleUndo();
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape) && selectedBuilding != null)
         {
             CancelBuildingPlacement();
@@ -171,7 +189,7 @@ public class BuildingManager : MonoBehaviour
         float halfWidth = (size.x * gridManager.cellSize) / 2f;
         float halfHeight = (size.y * gridManager.cellSize) / 2f;
 
-        // Check grid boundaries
+        // Grid boundaries check
         float minX = gridOffset.x;
         float maxX = -gridOffset.x;
         float minZ = gridOffset.z;
@@ -189,26 +207,29 @@ public class BuildingManager : MonoBehaviour
             return true;
         }
 
+        // Create bounds for the new building using sprite size
+        SpriteRenderer previewSprite = previewBuilding.GetComponent<SpriteRenderer>();
         Vector3 buildingPosition = new Vector3(position.x, -90f, position.y);
-        Vector3 buildingSize = new Vector3(size.x * gridManager.cellSize, 1f, size.y * gridManager.cellSize);
+        Bounds newBuildingBounds = previewSprite.sprite.bounds;
+        newBuildingBounds.center = buildingPosition;
+        newBuildingBounds.size = new Vector3(
+            previewSprite.sprite.bounds.size.x * previewBuilding.transform.localScale.x,
+            1f,
+            previewSprite.sprite.bounds.size.y * previewBuilding.transform.localScale.y
+        );
 
-        // Check only against buildings on the current floor
+        // Check against existing buildings
         if (buildingsByFloor.ContainsKey(currentFloor))
         {
             foreach (GameObject existingBuilding in buildingsByFloor[currentFloor])
             {
-                // Skip collision check if existing building is a foundation
                 if (existingBuilding.CompareTag("Foundation"))
-                {
                     continue;
-                }
 
                 SpriteRenderer existingRenderer = existingBuilding.GetComponent<SpriteRenderer>();
                 if (existingRenderer != null)
                 {
                     Bounds existingBounds = existingRenderer.bounds;
-                    Bounds newBuildingBounds = new Bounds(buildingPosition, buildingSize);
-                
                     if (existingBounds.Intersects(newBuildingBounds))
                     {
                         return false;
@@ -219,6 +240,7 @@ public class BuildingManager : MonoBehaviour
 
         return true;
     }
+
 
 
     private void PlaceBuilding(Vector3 mousePos)
@@ -241,6 +263,7 @@ public class BuildingManager : MonoBehaviour
             buildingsByFloor[currentFloor] = new List<GameObject>();
         }
         buildingsByFloor[currentFloor].Add(newBuilding);
+        buildingHistory.Push((newBuilding, currentFloor));
         UpdateResourceDisplay();
     }
 

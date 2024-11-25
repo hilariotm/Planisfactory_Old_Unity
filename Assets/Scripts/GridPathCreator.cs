@@ -238,6 +238,12 @@ public class GridPathCreator : MonoBehaviour
         );
     }
 
+    public void ResetCameraPosition()
+    {
+        targetPanPosition = new Vector3(0f, Camera.main.transform.position.y, 0f);
+        targetZoom = Mathf.Max(gridWidth, gridHeight) * cellSize / 2f; // Reset to initial zoom level
+    }
+
     private void SetupLineRenderer(LineRenderer line)
     {
         line.startWidth = lineWidth;
