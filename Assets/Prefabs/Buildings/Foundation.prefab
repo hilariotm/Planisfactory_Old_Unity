@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7523603668876036723}
   - component: {fileID: 9093919638298991153}
+  - component: {fileID: 7007923542089913204}
   m_Layer: 0
   m_Name: Foundation
   m_TagString: Foundation
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &7007923542089913204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6268827326400911983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcb6ecd781397ab4b85cbee4fa122bbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingData: {fileID: 11400000, guid: 1a13d77644877454e91cdba5f729c1a3, type: 2}

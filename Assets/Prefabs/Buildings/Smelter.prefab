@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9122003980104677875}
   - component: {fileID: 1938673593961824909}
+  - component: {fileID: 9103350337577755815}
   m_Layer: 0
   m_Name: Smelter
   m_TagString: Untagged
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &9103350337577755815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8583444797338445965}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcb6ecd781397ab4b85cbee4fa122bbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingData: {fileID: 11400000, guid: c758dea7c338e8a4295cb2574b72056d, type: 2}

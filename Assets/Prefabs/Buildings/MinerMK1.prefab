@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2731509729880838012}
   - component: {fileID: 9215795228761977284}
+  - component: {fileID: -8597981429702851255}
   m_Layer: 0
   m_Name: MinerMK1
   m_TagString: Untagged
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-8597981429702851255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6225360468854003035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcb6ecd781397ab4b85cbee4fa122bbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingData: {fileID: 11400000, guid: a08bc5d804e37ae48bed588e5c2da051, type: 2}

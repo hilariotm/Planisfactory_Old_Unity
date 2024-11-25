@@ -20,3 +20,8 @@ MonoBehaviour:
   subCategory: 19
   powerConsumption: 0
   powerGeneration: 0
+  requirements:
+  - resource: {fileID: 11400000, guid: 3fcd1c723f5b05c4480befc65559959a, type: 2}
+    amount: 10
+  - resource: {fileID: 11400000, guid: 2e15e582fdd149844ae0e8db8b967ab3, type: 2}
+    amount: 10

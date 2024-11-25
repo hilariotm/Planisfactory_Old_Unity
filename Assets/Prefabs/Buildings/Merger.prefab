@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7851006632993512748}
   - component: {fileID: 615789943462277148}
+  - component: {fileID: 5181160877725455790}
   m_Layer: 0
   m_Name: Merger
   m_TagString: Untagged
@@ -84,3 +85,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5181160877725455790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7001735227887592465}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcb6ecd781397ab4b85cbee4fa122bbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildingData: {fileID: 11400000, guid: 7cef2f122b181224089dcfe6b5534690, type: 2}

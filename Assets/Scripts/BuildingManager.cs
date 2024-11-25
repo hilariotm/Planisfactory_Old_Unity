@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using static ProductionTreeCalculator;
 
 public class BuildingManager : MonoBehaviour
 {
@@ -10,6 +11,25 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private int currentFloor = 0;
     [SerializeField] private int maxFloors = 3;
     [SerializeField] private GridPathCreator gridPathCreator;
+    [SerializeField] private ProductionTreeCalculator productionCalculator;
+    [SerializeField] private ProductionChainUI productionChainUI;
+
+    public void ShowProductionChain(BuildingData building)
+    {
+        ResourceNode tree = productionCalculator.CalculateBuildingRequirements(building);
+        productionChainUI.DisplayChain(tree);
+    }
+
+
+    public void CalculateCurrentLayoutRequirements()
+    {
+        ResourceNode requirements = productionCalculator.CalculateLayoutRequirements(buildingsByFloor);
+        // Use the requirements data to display in UI or export
+    }
+
+    // Add these variables at the top with other private fields
+    private float currentRotation = 0f;
+    private Quaternion baseRotation = Quaternion.Euler(-90f, 0f, 0f);
 
     // Dictionary to store buildings by floor
     private Dictionary<int, List<GameObject>> buildingsByFloor = new Dictionary<int, List<GameObject>>();
@@ -78,10 +98,18 @@ public class BuildingManager : MonoBehaviour
 
         if (selectedBuilding != null && previewBuilding != null)
         {
+            // Handle rotation
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                currentRotation += 90f;
+                if (currentRotation >= 360f) currentRotation = 0f;
+                previewBuilding.transform.rotation = baseRotation * Quaternion.Euler(0f, 0f, currentRotation);
+            }
+
             Vector3 mousePos = GetMouseWorldPosition();
             Vector3 snappedPos = SnapBuildingToGrid(mousePos, selectedBuilding.size);
             previewBuilding.transform.position = new Vector3(snappedPos.x, -90f, snappedPos.z);
-        
+    
             canPlace = CheckPlacementValidity(new Vector2(mousePos.x, mousePos.z), selectedBuilding.size);
             UpdatePreviewColor(canPlace);
 
@@ -95,6 +123,7 @@ public class BuildingManager : MonoBehaviour
     public void SelectBuilding(BuildingData building)
     {
         selectedBuilding = building;
+        currentRotation = 0f;
         CreatePreview();
     }
 
@@ -120,9 +149,9 @@ public class BuildingManager : MonoBehaviour
     {
         if (previewBuilding != null) 
             Destroy(previewBuilding);
-            
+        
         previewBuilding = Instantiate(selectedBuilding.prefab, buildingsContainer);
-        previewBuilding.transform.rotation = Quaternion.Euler(-90, 0, 0);
+        previewBuilding.transform.rotation = baseRotation;
         Vector2 mousePos = GetMouseWorldPosition();
         previewBuilding.transform.position = new Vector3(mousePos.x, -90f, mousePos.y);
         previewRenderer = previewBuilding.GetComponent<SpriteRenderer>();
@@ -193,19 +222,24 @@ public class BuildingManager : MonoBehaviour
     {
         Vector3 snappedPos = SnapBuildingToGrid(mousePos, selectedBuilding.size);
         Vector3 spawnPosition = new Vector3(snappedPos.x, -90f, snappedPos.z);
-        Quaternion rotation = Quaternion.Euler(-90, 0, 0);
-        GameObject newBuilding = Instantiate(selectedBuilding.prefab, spawnPosition, rotation);
+    
+        // Apply both base rotation and current rotation
+        Quaternion finalRotation = baseRotation * Quaternion.Euler(0f, 0f, currentRotation);
+    
+        GameObject newBuilding = Instantiate(selectedBuilding.prefab, spawnPosition, finalRotation);
         newBuilding.transform.SetParent(buildingsContainer);
         placedBuildings.Add(newBuilding);
-    
+
         SpriteRenderer renderer = newBuilding.GetComponent<SpriteRenderer>();
         renderer.sortingOrder = GetSortingOrder(newBuilding);
-    
+
         if (!buildingsByFloor.ContainsKey(currentFloor))
         {
             buildingsByFloor[currentFloor] = new List<GameObject>();
         }
         buildingsByFloor[currentFloor].Add(newBuilding);
+
+        ShowProductionChain(selectedBuilding);
     }
 
     private void CancelBuildingPlacement()

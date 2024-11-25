@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "BuildingData", menuName = "Buildings/Building Data")]
 public class BuildingData : ScriptableObject
@@ -15,6 +16,15 @@ public class BuildingData : ScriptableObject
     {
         return powerGeneration - powerConsumption;
     }
+    [System.Serializable]
+    public class BuildingRequirement
+    {
+        public ResourceData resource;
+        public int amount;
+    }
+    
+    [Header("Building Requirements")]
+    public List<BuildingRequirement> requirements;
 }
 
 [System.Serializable]
