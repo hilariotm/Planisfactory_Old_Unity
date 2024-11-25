@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using static ProductionTreeCalculator;
 
 public class BuildingManager : MonoBehaviour
 {
@@ -11,21 +10,8 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private int currentFloor = 0;
     [SerializeField] private int maxFloors = 3;
     [SerializeField] private GridPathCreator gridPathCreator;
-    [SerializeField] private ProductionTreeCalculator productionCalculator;
-    [SerializeField] private ProductionChainUI productionChainUI;
-
-    public void ShowProductionChain(BuildingData building)
-    {
-        ResourceNode tree = productionCalculator.CalculateBuildingRequirements(building);
-        productionChainUI.DisplayChain(tree);
-    }
-
-
-    public void CalculateCurrentLayoutRequirements()
-    {
-        ResourceNode requirements = productionCalculator.CalculateLayoutRequirements(buildingsByFloor);
-        // Use the requirements data to display in UI or export
-    }
+    [SerializeField] private ResourceTotalsUI resourceTotalsUI;
+    [SerializeField] private ResourceCalculator resourceCalculator;
 
     // Add these variables at the top with other private fields
     private float currentRotation = 0f;
@@ -33,6 +19,12 @@ public class BuildingManager : MonoBehaviour
 
     // Dictionary to store buildings by floor
     private Dictionary<int, List<GameObject>> buildingsByFloor = new Dictionary<int, List<GameObject>>();
+
+    private void UpdateResourceDisplay()
+    {
+        Dictionary<ResourceData, int> totals = resourceCalculator.CalculateLayoutTotals(buildingsByFloor);
+        resourceTotalsUI.DisplayResourceTotals(totals);
+    }
 
     private void Start()
     {
@@ -238,8 +230,7 @@ public class BuildingManager : MonoBehaviour
             buildingsByFloor[currentFloor] = new List<GameObject>();
         }
         buildingsByFloor[currentFloor].Add(newBuilding);
-
-        ShowProductionChain(selectedBuilding);
+        UpdateResourceDisplay();
     }
 
     private void CancelBuildingPlacement()
