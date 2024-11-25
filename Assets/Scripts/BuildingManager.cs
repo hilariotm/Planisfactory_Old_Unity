@@ -12,6 +12,8 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private GridPathCreator gridPathCreator;
     [SerializeField] private ResourceTotalsUI resourceTotalsUI;
     [SerializeField] private ResourceCalculator resourceCalculator;
+    [SerializeField] private PowerSummaryUI powerSummaryUI;
+
 
     // Add these variables at the top with other private fields
     private float currentRotation = 0f;
@@ -22,8 +24,9 @@ public class BuildingManager : MonoBehaviour
 
     private void UpdateResourceDisplay()
     {
-        Dictionary<ResourceData, int> totals = resourceCalculator.CalculateLayoutTotals(buildingsByFloor);
-        resourceTotalsUI.DisplayResourceTotals(totals);
+        var (resources, powerGen, powerConsumption) = resourceCalculator.CalculateLayoutTotals(buildingsByFloor);
+        resourceTotalsUI.DisplayResourceTotals(resources);
+        powerSummaryUI.UpdatePowerDisplay(powerGen, powerConsumption);
     }
 
     private void Start()
@@ -117,6 +120,7 @@ public class BuildingManager : MonoBehaviour
         selectedBuilding = building;
         currentRotation = 0f;
         CreatePreview();
+        gridPathCreator.StopPathCreation();
     }
 
     private int GetSortingOrder(GameObject building)
@@ -166,7 +170,7 @@ public class BuildingManager : MonoBehaviour
         Vector3 gridOffset = gridManager.GetGridOffset();
         float halfWidth = (size.x * gridManager.cellSize) / 2f;
         float halfHeight = (size.y * gridManager.cellSize) / 2f;
-    
+
         // Check grid boundaries
         float minX = gridOffset.x;
         float maxX = -gridOffset.x;
@@ -179,9 +183,15 @@ public class BuildingManager : MonoBehaviour
             return false;
         }
 
+        // If placing a foundation, skip collision checks
+        if (selectedBuilding.prefab.CompareTag("Foundation"))
+        {
+            return true;
+        }
+
         Vector3 buildingPosition = new Vector3(position.x, -90f, position.y);
         Vector3 buildingSize = new Vector3(size.x * gridManager.cellSize, 1f, size.y * gridManager.cellSize);
-    
+
         // Check only against buildings on the current floor
         if (buildingsByFloor.ContainsKey(currentFloor))
         {
@@ -209,6 +219,7 @@ public class BuildingManager : MonoBehaviour
 
         return true;
     }
+
 
     private void PlaceBuilding(Vector3 mousePos)
     {
