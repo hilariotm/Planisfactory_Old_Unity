@@ -6,11 +6,12 @@ TagManager:
   tags:
   - Foundation
   - Conveyor
+  - HoverIcon
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Buildings
   - Water
   - UI
   - 

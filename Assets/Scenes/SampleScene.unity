@@ -776,7 +776,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1467.5, y: -892.30005}
+  m_AnchoredPosition: {x: -1467.5002, y: -892.30005}
   m_SizeDelta: {x: -3161.7, y: -1981.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &424778040
@@ -1501,7 +1501,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1467.5002, y: 109.600006}
+  m_AnchoredPosition: {x: -1467.5007, y: 109.6001}
   m_SizeDelta: {x: -3161.7, y: -459.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &711105607
@@ -2047,6 +2047,9 @@ MonoBehaviour:
   resourceTotalsUI: {fileID: 711105607}
   resourceCalculator: {fileID: 1085754255}
   powerSummaryUI: {fileID: 424778040}
+  radialMenuPrefab: {fileID: 1511572188647561564, guid: 081d92beed92fec439c4899df3dbe6b2, type: 3}
+  quadrantButtonPrefab: {fileID: 381411814805781837, guid: b97a4ac46d4e97d468fbcb609a6456c0, type: 3}
+  hoverIconPrefab: {fileID: 7971966629304510013, guid: 0c874f96f7e051948bf6426501267844, type: 3}
 --- !u!1 &1072884827
 GameObject:
   m_ObjectHideFlags: 0
@@ -2315,7 +2318,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.0001463592}
+  m_AnchoredPosition: {x: 0.00012207031, y: -0.00010848961}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1 &1293755500
@@ -2400,7 +2403,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2079681298}
   m_HandleRect: {fileID: 2079681297}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 0.9999999
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3321,7 +3324,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.0008504835}
+  m_AnchoredPosition: {x: 0.000061035156, y: -0.00021362305}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1668660897
@@ -3342,7 +3345,7 @@ MonoBehaviour:
     m_Top: 50
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 10
+  m_Spacing: 20
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
