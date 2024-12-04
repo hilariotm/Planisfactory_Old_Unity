@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6387905572239870970}
   - component: {fileID: 238947400641403600}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: PathSegment
   m_TagString: Conveyor
   m_Icon: {fileID: 0}

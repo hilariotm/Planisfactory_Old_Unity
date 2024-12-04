@@ -259,6 +259,7 @@ public class GridPathCreator : MonoBehaviour
         line.endWidth = lineWidth;
         line.material = lineMaterial;
         // Set sorting order for conveyors
+        line.sortingLayerName = "Buildings";
         int floorBase = currentFloor * 1000;
         line.sortingOrder = floorBase + 100;  // Conveyors: above foundations, below other buildings
         line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;

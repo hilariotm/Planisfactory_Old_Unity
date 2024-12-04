@@ -15,15 +15,30 @@ public class BuildingManager : MonoBehaviour
     [SerializeField] private ResourceTotalsUI resourceTotalsUI;
     [SerializeField] private ResourceCalculator resourceCalculator;
     [SerializeField] private PowerSummaryUI powerSummaryUI;
-
-    [Header("Radial Menu")]
-    [SerializeField] private GameObject radialMenuPrefab;
-    [SerializeField] private GameObject quadrantButtonPrefab;
     [SerializeField] private GameObject hoverIconPrefab;
 
+    [Header("Building Interaction")]
+    [SerializeField] private GameObject actionMenuPrefab;
+    [SerializeField] private Canvas mainCanvas; // Reference to your existing canvas
+
+    private GameObject ghostBuilding;
+    private bool isCopyingBuilding;
+
     private GameObject selectedForEdit;
-    private bool isMovingBuilding;
-    private GameObject currentRadialMenu;
+    public bool isMovingBuilding;
+
+    private GameObject currentActionMenu;
+
+    public void ShowBuildingMenu(GameObject building)
+    {
+        if (currentActionMenu != null)
+        {
+            Destroy(currentActionMenu);
+        }
+    
+        currentActionMenu = Instantiate(actionMenuPrefab, mainCanvas.transform);
+        currentActionMenu.GetComponent<BuildingActionMenu>().Initialize(building, this);
+    }
 
 
     // Add these variables at the top with other private fields
@@ -33,14 +48,8 @@ public class BuildingManager : MonoBehaviour
     // Dictionary to store buildings by floor
     private Dictionary<int, List<GameObject>> buildingsByFloor = new Dictionary<int, List<GameObject>>();
 
-    public void PublicDeleteBuilding(GameObject building) => DeleteBuilding(building);
-    public void PublicRotateBuilding(GameObject building) => RotateBuilding(building);
-    public void PublicStartMovingBuilding(GameObject building) => StartMovingBuilding(building);
-    public void PublicCopyBuilding(GameObject building) => CopyBuilding(building);
     public GameObject GetHoverIconPrefab() => hoverIconPrefab;
     public bool IsPlacingBuilding() => selectedBuilding != null;
-
-
 
 
     private void HandleBuildingEdit()
@@ -58,82 +67,43 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
-    public void ShowEditMenu(GameObject building)
-    {
-        if (currentRadialMenu != null)
-            Destroy(currentRadialMenu);
 
-        SpriteRenderer buildingSprite = building.GetComponent<SpriteRenderer>();
-        float spriteWidth = buildingSprite.bounds.size.x;
-        float fixedOffset = 0.6f; // Adjust this value to set your desired fixed distance
-        Vector3 menuPosition = building.transform.position + new Vector3((spriteWidth/2 + fixedOffset), 0f, 0f);
-    
-        currentRadialMenu = Instantiate(radialMenuPrefab);
-    
-        Canvas canvas = currentRadialMenu.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.WorldSpace;
-        canvas.worldCamera = Camera.main;
-    
-        currentRadialMenu.transform.position = menuPosition;
-        currentRadialMenu.transform.rotation = Quaternion.Euler(-90f, 0f, 0f);
-        currentRadialMenu.transform.SetParent(buildingsContainer);
-    
-        RadialMenu radialMenu = currentRadialMenu.GetComponent<RadialMenu>();
-        radialMenu.Initialize(building, this);
-    }
-
-
-
-
-
-    private void DeleteBuilding(GameObject building)
+    public void DeleteBuilding(GameObject building)
     {
         buildingsByFloor[currentFloor].Remove(building);
         placedBuildings.Remove(building);
         Destroy(building);
-        Destroy(currentRadialMenu);
         UpdateResourceDisplay();
     }
 
-    private void RotateBuilding(GameObject building)
+    public void RotateBuilding(GameObject building)
     {
-        float currentRotation = building.transform.rotation.eulerAngles.z;
-        currentRotation = (currentRotation + 90f) % 360f;
-        building.transform.rotation = baseRotation * Quaternion.Euler(0f, 0f, currentRotation);
+        Quaternion currentRotation = building.transform.rotation;
+        building.transform.rotation = currentRotation * Quaternion.Euler(0f, 0f, 90f);
     }
 
-    private void StartMovingBuilding(GameObject building)
+
+
+    public void StartMovingBuilding(GameObject building)
     {
         selectedForEdit = building;
         isMovingBuilding = true;
-        Destroy(currentRadialMenu);
     }
 
-    private void FinishMovingBuilding()
+    public void FinishMovingBuilding()
     {
         isMovingBuilding = false;
         selectedForEdit = null;
         UpdateResourceDisplay();
     }
 
-    private void CopyBuilding(GameObject building)
-    {
-        // Store the original building's data
-        BuildingData buildingData = building.GetComponent<BuildingReference>().buildingData;
-        Vector3 position = building.transform.position;
-        Quaternion rotation = building.transform.rotation;
 
-        // Create the copy slightly offset from the original
-        Vector3 offsetPosition = position + new Vector3(gridManager.cellSize, 0, gridManager.cellSize);
-        GameObject copy = Instantiate(buildingData.prefab, offsetPosition, rotation);
-        copy.transform.SetParent(buildingsContainer);
-    
-        // Add to tracking collections
-        placedBuildings.Add(copy);
-        buildingsByFloor[currentFloor].Add(copy);
-    
-        // Update UI
-        UpdateResourceDisplay();
+    public void CopyBuilding(GameObject building)
+    {
+        BuildingData buildingData = building.GetComponent<BuildingReference>().buildingData;
+        selectedBuilding = buildingData;
+        currentRotation = building.transform.rotation.eulerAngles.z;
+        CreatePreview();
     }
 
 
@@ -203,6 +173,16 @@ public class BuildingManager : MonoBehaviour
     {
         HandleBuildingEdit();
 
+        // Modified menu closing check
+        if ((Input.GetMouseButtonDown(0) && !IsPointerOverUI()) || Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (currentActionMenu != null)
+            {
+                Destroy(currentActionMenu);
+                currentActionMenu = null;
+            }
+        }
+
         if (Input.GetKeyDown(KeyCode.Escape) && selectedBuilding != null)
         {
             CancelBuildingPlacement();
@@ -231,6 +211,7 @@ public class BuildingManager : MonoBehaviour
             }
         }
     }
+
 
     public void SelectBuilding(BuildingData building)
     {

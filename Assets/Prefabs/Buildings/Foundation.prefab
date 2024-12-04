@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6f271e2ac32d8742ac824848e88df3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hoverIconPrefab: {fileID: 7971966629304510013, guid: 0c874f96f7e051948bf6426501267844, type: 3}
 --- !u!65 &-1955359382933772303
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1011,7 +1011,7 @@ GameObject:
   m_Component:
   - component: {fileID: 617680777}
   - component: {fileID: 617680776}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: GridManager
   m_TagString: Conveyor
   m_Icon: {fileID: 0}
@@ -1053,7 +1053,7 @@ MonoBehaviour:
   panSmoothness: 10
   startPathButton: {fileID: 1501668515}
   stopPathButton: {fileID: 675969787}
-  buildingManager: {fileID: 0}
+  buildingManager: {fileID: 1028825868}
   isPathCreationMode: 0
   currentFloor: 0
 --- !u!4 &617680777
@@ -2047,9 +2047,10 @@ MonoBehaviour:
   resourceTotalsUI: {fileID: 711105607}
   resourceCalculator: {fileID: 1085754255}
   powerSummaryUI: {fileID: 424778040}
-  radialMenuPrefab: {fileID: 1511572188647561564, guid: 081d92beed92fec439c4899df3dbe6b2, type: 3}
-  quadrantButtonPrefab: {fileID: 381411814805781837, guid: b97a4ac46d4e97d468fbcb609a6456c0, type: 3}
   hoverIconPrefab: {fileID: 7971966629304510013, guid: 0c874f96f7e051948bf6426501267844, type: 3}
+  actionMenuPrefab: {fileID: 7059555542697670552, guid: b57db6ac470a4fe47bbeb4ff3c64dae1, type: 3}
+  mainCanvas: {fileID: 339349351}
+  isMovingBuilding: 0
 --- !u!1 &1072884827
 GameObject:
   m_ObjectHideFlags: 0

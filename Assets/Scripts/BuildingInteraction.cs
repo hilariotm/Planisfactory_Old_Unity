@@ -1,4 +1,8 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
+
+
 
 public class BuildingInteraction : MonoBehaviour
 {
@@ -14,19 +18,17 @@ public class BuildingInteraction : MonoBehaviour
 
     private void OnMouseOver()
     {
-        if (currentHoverIcon == null && !buildingManager.IsPlacingBuilding())
+        if (currentHoverIcon == null && !buildingManager.IsPlacingBuilding() && !buildingManager.isMovingBuilding)
         {
             currentHoverIcon = Instantiate(buildingManager.GetHoverIconPrefab());
             Canvas canvas = currentHoverIcon.GetComponentInChildren<Canvas>();
             canvas.worldCamera = Camera.main;
-        
+    
             currentHoverIcon.transform.position = transform.position + Vector3.up * 2f;
             currentHoverIcon.transform.localScale = Vector3.one * 0.01f;
             currentHoverIcon.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-
         }
     }
-
 
     private void OnMouseExit()
     {
@@ -38,12 +40,29 @@ public class BuildingInteraction : MonoBehaviour
         }
     }
 
-
     private void OnMouseDown()
     {
-        if (currentHoverIcon != null)
+        if (currentHoverIcon != null && !buildingManager.isMovingBuilding && !IsClickingOnActionMenu())
         {
-            buildingManager.ShowEditMenu(gameObject);
+            buildingManager.ShowBuildingMenu(gameObject);
         }
     }
+
+    private bool IsClickingOnActionMenu()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.GetComponentInParent<BuildingActionMenu>() != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
