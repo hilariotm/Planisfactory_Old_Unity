@@ -385,6 +385,32 @@ public class GridPathCreator : MonoBehaviour
         Debug.Log($"Total paths on floor {currentFloor}: {pathsByFloor[currentFloor].Count}");
     }
 
+    private void OptimizePath(List<Vector2> points, float angleThreshold = 5f, float minDistance = 0.1f)
+    {
+        if (points.Count < 3) return;
+    
+        List<Vector2> optimized = new List<Vector2>();
+        optimized.Add(points[0]);
+    
+        for (int i = 1; i < points.Count - 1; i++)
+        {
+            Vector2 prevSegment = points[i] - points[i-1];
+            Vector2 nextSegment = points[i+1] - points[i];
+        
+            float angle = Vector2.Angle(prevSegment, nextSegment);
+            float distance = Vector2.Distance(points[i], points[i-1]);
+        
+            if (angle > angleThreshold && distance > minDistance)
+            {
+                optimized.Add(points[i]);
+            }
+        }
+    
+        optimized.Add(points[points.Count - 1]);
+        points = optimized;
+    }
+
+
     // Add method to change floors
     public void SetCurrentFloor(int floor)
     {
@@ -461,18 +487,23 @@ public class GridPathCreator : MonoBehaviour
     {
         if (currentLine != null && currentPathPoints.Count > 0)
         {
+            // First optimize the path
+            OptimizePath(currentPathPoints);
+        
+            // Then create the positions array with optimized points
             Vector3[] points = new Vector3[currentPathPoints.Count];
             for (int i = 0; i < currentPathPoints.Count; i++)
             {
                 points[i] = new Vector3(currentPathPoints[i].x, 0, currentPathPoints[i].y);
             }
-            
+        
             currentLine.positionCount = points.Length;
             currentLine.SetPositions(points);
-            
+        
             UpdateTextureMapping(points);
         }
     }
+
 
     private void UpdateTextureMapping(Vector3[] points)
     {

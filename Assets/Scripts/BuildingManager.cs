@@ -274,39 +274,40 @@ public class BuildingManager : MonoBehaviour
     private bool CheckPlacementValidity(Vector2 position, Vector2Int size)
     {
         Vector3 gridOffset = gridManager.GetGridOffset();
-        float halfWidth = (size.x * gridManager.cellSize) / 2f;
-        float halfHeight = (size.y * gridManager.cellSize) / 2f;
+        SpriteRenderer previewSprite = previewBuilding.GetComponent<SpriteRenderer>();
+    
+        // Get the sprite dimensions
+        Vector2 spriteSize = previewSprite.sprite.bounds.size;
+        Vector3 rotatedScale = previewBuilding.transform.localScale;
+    
+        // Determine if we need to swap dimensions based on rotation
+        bool shouldSwap = currentRotation % 180 != 0;
+        float width = shouldSwap ? spriteSize.y * rotatedScale.y : spriteSize.x * rotatedScale.x;
+        float height = shouldSwap ? spriteSize.x * rotatedScale.x : spriteSize.y * rotatedScale.y;
+    
+        Bounds previewBounds = new Bounds(
+            new Vector3(position.x, -90f, position.y),
+            new Vector3(width, 1f, height)
+        );
 
-        // Grid boundaries check
+        // Grid boundary check
         float minX = gridOffset.x;
         float maxX = -gridOffset.x;
         float minZ = gridOffset.z;
         float maxZ = -gridOffset.z;
 
-        if (position.x - halfWidth < minX || position.x + halfWidth > maxX ||
-            position.y - halfHeight < minZ || position.y + halfHeight > maxZ)
-        {
+        if (previewBounds.min.x < minX || previewBounds.max.x > maxX ||
+            previewBounds.min.z < minZ || previewBounds.max.z > maxZ)
+        {   
             return false;
         }
 
-        // If placing a foundation, skip collision checks
         if (selectedBuilding.prefab.CompareTag("Foundation"))
         {
             return true;
         }
 
-        // Create bounds for the new building using sprite size
-        SpriteRenderer previewSprite = previewBuilding.GetComponent<SpriteRenderer>();
-        Vector3 buildingPosition = new Vector3(position.x, -90f, position.y);
-        Bounds newBuildingBounds = previewSprite.sprite.bounds;
-        newBuildingBounds.center = buildingPosition;
-        newBuildingBounds.size = new Vector3(
-            previewSprite.sprite.bounds.size.x * previewBuilding.transform.localScale.x,
-            1f,
-            previewSprite.sprite.bounds.size.y * previewBuilding.transform.localScale.y
-        );
-
-        // Check against existing buildings
+        // Check collisions with existing buildings
         if (buildingsByFloor.ContainsKey(currentFloor))
         {
             foreach (GameObject existingBuilding in buildingsByFloor[currentFloor])
@@ -318,7 +319,7 @@ public class BuildingManager : MonoBehaviour
                 if (existingRenderer != null)
                 {
                     Bounds existingBounds = existingRenderer.bounds;
-                    if (existingBounds.Intersects(newBuildingBounds))
+                    if (previewBounds.Intersects(existingBounds))
                     {
                         return false;
                     }
@@ -329,7 +330,15 @@ public class BuildingManager : MonoBehaviour
         return true;
     }
 
-
+    private Vector2Int GetRotatedSize(Vector2Int originalSize, float rotation)
+    {
+        rotation = rotation % 360;
+        if (rotation < 0) rotation += 360;
+    
+        return rotation % 180 == 0 ? 
+            originalSize : 
+            new Vector2Int(originalSize.y, originalSize.x);
+    }
 
     private void PlaceBuilding(Vector3 mousePos)
     {
