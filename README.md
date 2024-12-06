@@ -1,2 +1,1 @@
-# FactoryPlanner
- 
+# Planisfactory
