@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: FactoryPlanner2
+  companyName: Bulblo Media
+  productName: Planisfactory
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -801,7 +801,7 @@ PlayerSettings:
   cloudProjectId: 4936a298-828a-4e57-847b-66715456a41c
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: FactoryPlanner2
+  projectName: Planisfactory
   organizationId: mhilario
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
